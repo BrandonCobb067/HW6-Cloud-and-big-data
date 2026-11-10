@@ -1,0 +1,6 @@
+data/
+outputs/
+*.gz
+*.json
+*.log
+__pycache__/
