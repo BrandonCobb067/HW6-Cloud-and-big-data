@@ -16,9 +16,15 @@ if [[ "$DATA_PATH" == *"'"* || "$DATA_PATH" == *\\* || "$DATA_PATH" == *$'\n'* ]
   exit 1
 fi
 HIVE_URL="${HIVE_URL:-jdbc:hive2://localhost:10000/default}"
+
 beeline -u "$HIVE_URL" --force=false --showHeader=true --outputformat=table \
   --hiveconf "DATA_PATH=$DATA_PATH" -f Part1.hql \
   > outputs/Part1Output.txt 2> outputs/Part1Errors.txt
+
 beeline -u "$HIVE_URL" --force=false --showHeader=true --outputformat=table \
   -f Part2.hql > outputs/Part2Output.txt 2> outputs/Part2Errors.txt
+
+beeline -u "$HIVE_URL" --force=false --showHeader=true --outputformat=table \
+  -f Part3.hql > outputs/Part3Output.txt 2> outputs/Part3Errors.txt
+
 echo "Results saved in outputs/."
