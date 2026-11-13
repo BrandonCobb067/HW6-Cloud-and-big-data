@@ -1,8 +1,6 @@
--- Part 3
 USE hw6;
 
--- Problem 6
--- Choice for bucketing: unix_review_time
+SELECT '=== Part 3 Problem 6 ===' AS section;
 CREATE TABLE IF NOT EXISTS GameTableBuck (
   review_id BIGINT,
   reviewer_id STRING,
@@ -20,28 +18,28 @@ CLUSTERED BY (unix_review_time) INTO 3 BUCKETS
 STORED AS ORC
 TBLPROPERTIES ('transactional'='false');
 
--- (Loading data into the bucketed table for Problem 7)
+SHOW CREATE TABLE GameTableBuck;
+DESCRIBE FORMATTED GameTableBuck;
+
 SET hive.enforce.bucketing = true;
 
 INSERT OVERWRITE TABLE GameTableBuck
 SELECT * FROM GameTable;
 
--- Problem 7
--- Finding min and max review_date for each bucket.
--- Hive assigns buckets using pmod(hash(column), num_buckets).
-SELECT pmod(hash(unix_review_time), 3) AS bucket_id,
-       MIN(review_date) AS min_review_date,
-       MAX(review_date) AS max_review_date
+SELECT '=== Part 3 Problem 7 ===' AS section;
+SELECT REGEXP_EXTRACT(INPUT__FILE__NAME, '([^/]+)$', 1) AS bucket_file,
+       MIN(CAST(FROM_UNIXTIME(UNIX_TIMESTAMP(review_date, 'MM d, yyyy'), 'yyyy-MM-dd') AS DATE)) AS min_review_date,
+       MAX(CAST(FROM_UNIXTIME(UNIX_TIMESTAMP(review_date, 'MM d, yyyy'), 'yyyy-MM-dd') AS DATE)) AS max_review_date,
+       COUNT(*) AS review_count
 FROM GameTableBuck
-GROUP BY pmod(hash(unix_review_time), 3)
-ORDER BY bucket_id;
+GROUP BY REGEXP_EXTRACT(INPUT__FILE__NAME, '([^/]+)$', 1)
+ORDER BY bucket_file;
 
-
--- Problem 8
+SELECT '=== Part 3 Problem 8 ===' AS section;
 SELECT product_id,
        AVG(helpful_votes) AS avg_helpful_votes,
        AVG(total_votes) AS avg_total_votes
 FROM GameTableBuck
 GROUP BY product_id
-HAVING AVG(helpful_votes) > 1;
-
+HAVING AVG(helpful_votes) > 1
+ORDER BY product_id;

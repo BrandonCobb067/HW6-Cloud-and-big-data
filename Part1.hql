@@ -11,6 +11,7 @@ TBLPROPERTIES ('transactional'='false');
 LOAD DATA LOCAL INPATH '${hiveconf:DATA_PATH}' OVERWRITE INTO TABLE GameInput;
 
 -- Problem 1
+SELECT '=== Part 1 Problem 1 ===' AS section;
 CREATE TABLE IF NOT EXISTS GameTable (
   review_id BIGINT,
   reviewer_id STRING,
@@ -42,17 +43,19 @@ LATERAL VIEW json_tuple(source.record,
   review_text, summary, review_date, unix_review_time;
 
 DESCRIBE FORMATTED GameTable;
-SELECT * FROM GameTable ORDER BY review_id LIMIT 5;
+SHOW CREATE TABLE GameTable;
 SELECT COUNT(*) AS loaded_rows, COUNT(DISTINCT review_id) AS unique_review_ids
 FROM GameTable;
 
 -- Problem 2
+SELECT '=== Part 1 Problem 2 ===' AS section;
 SELECT product_id, COUNT(*) AS review_count, AVG(star_rating) AS average_star_rating
 FROM GameTable
 GROUP BY product_id
 ORDER BY product_id;
 
 -- Problem 3
+SELECT '=== Part 1 Problem 3 ===' AS section;
 SELECT star_rating, SUM(helpful_votes) AS sum_helpful_votes,
        SUM(total_votes) AS sum_total_votes
 FROM GameTable
